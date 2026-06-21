@@ -1,0 +1,36 @@
+[package]
+name = "dotdiff"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.90"
+description = "Semantic diff for JSON, YAML, TOML, and NDJSON: a structured, agent-friendly change-list instead of line noise."
+authors = ["Ruben J. Jongejan <ruben.jongejan@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/rvben/dotdiff"
+homepage = "https://github.com/rvben/dotdiff"
+keywords = ["cli"]
+categories = ["command-line-utilities"]
+readme = "README.md"
+
+[lib]
+name = "dotdiff"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dotdiff"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+
+[dev-dependencies]
+jsonschema = { version = "0.46", default-features = false }
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
