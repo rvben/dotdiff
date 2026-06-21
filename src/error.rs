@@ -1,9 +1,12 @@
 //! Error type, the stable error `kind` set, and the exit-code contract.
 //!
 //! Errors are reported as a clispec structured envelope on the last line of
-//! stderr: `{"error":{"kind":...,"message":...,"exit_code":...,"hint":...}}`.
-//! Add your own variants here as the tool grows; keep `kind()` snake_case and
-//! declare every kind in `schema.rs`.
+//! stderr. Finding differences is NOT an error: it is the `differences_found`
+//! outcome (exit 1), declared under `outcomes` in the schema.
+//!
+//! Exit codes:
+//! - `2` an input could not be read (`io`) or parsed (`parse`)
+//! - `3` usage error (bad arguments)
 
 use thiserror::Error;
 
@@ -13,9 +16,17 @@ pub enum Error {
     #[error("{message}")]
     Usage { message: String },
 
-    /// Example domain error - replace with your own.
-    #[error("not a number: {input:?}")]
-    InvalidInput { input: String },
+    /// An input could not be parsed in its (detected or forced) format.
+    #[error("{label}: invalid {format}: {message}")]
+    Parse {
+        label: String,
+        format: String,
+        message: String,
+    },
+
+    /// An input file could not be read.
+    #[error("{path}: {message}")]
+    Io { path: String, message: String },
 }
 
 impl Error {
@@ -23,7 +34,8 @@ impl Error {
     pub fn kind(&self) -> &'static str {
         match self {
             Error::Usage { .. } => "usage",
-            Error::InvalidInput { .. } => "invalid_input",
+            Error::Parse { .. } => "parse",
+            Error::Io { .. } => "io",
         }
     }
 
@@ -31,14 +43,17 @@ impl Error {
     pub fn hint(&self) -> Option<&'static str> {
         match self {
             Error::Usage { .. } => Some("see `dotdiff --help` or `dotdiff schema`"),
-            Error::InvalidInput { .. } => Some("pass an integer, e.g. `dotdiff 21`"),
+            Error::Parse { .. } => {
+                Some("force the format with --format if detection guessed wrong")
+            }
+            Error::Io { .. } => None,
         }
     }
 
     /// The process exit code associated with this error.
     pub fn exit_code(&self) -> i32 {
         match self {
-            Error::InvalidInput { .. } => 1,
+            Error::Parse { .. } | Error::Io { .. } => 2,
             Error::Usage { .. } => 3,
         }
     }
