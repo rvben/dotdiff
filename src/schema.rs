@@ -39,7 +39,8 @@ pub fn contract() -> Value {
                 "output_fields": [
                     {"name": "identical", "type": "boolean", "description": "True when the inputs have no differences."},
                     {"name": "changes", "type": "object[]", "description": "Each change has `op` (added/removed/changed), `path` (a dotpath locator), and `old`/`new` values as applicable."}
-                ]
+                ],
+                "example": {"args": ["-", "-"], "stdin": "{\"a\":1}"}
             },
             {
                 "name": "schema",
