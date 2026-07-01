@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/rvben/dotdiff/actions/workflows/ci.yml/badge.svg)](https://github.com/rvben/dotdiff/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/dotdiff.svg)](https://crates.io/crates/dotdiff)
-[![clispec](https://img.shields.io/badge/clispec-v0.2-blue)](https://clispec.dev)
+[![clispec compliant](https://img.shields.io/badge/clispec-compliant-3b82f6)](https://clispec.dev)
 
 Semantic diff for JSON, YAML, TOML, and NDJSON. Compares two documents
 *structurally* (not line by line) and prints a path-addressed change list
