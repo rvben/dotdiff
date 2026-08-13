@@ -1,12 +1,12 @@
-//! The clispec v0.2 contract emitted by `dotdiff schema`.
+//! The clispec v0.3 candidate contract emitted by `dotdiff schema`.
 //!
-//! Conforms to <https://clispec.dev/schema/v0.2.json> (validated by a test
-//! against the vendored copy in `schemas/clispec-v0.2.json`).
+//! Conforms to <https://clispec.dev/schema/v0.3.json> (validated by a test
+//! against the vendored copy in `schemas/clispec-v0.3.json`).
 
 use serde_json::{Value, json};
 
 /// The version of The CLI Spec this document conforms to.
-pub const CLISPEC_VERSION: &str = "0.2";
+pub const CLISPEC_VERSION: &str = "0.3";
 
 /// Build the clispec contract as a JSON value.
 pub fn contract() -> Value {
@@ -15,9 +15,11 @@ pub fn contract() -> Value {
         "name": env!("CARGO_PKG_NAME"),
         "version": env!("CARGO_PKG_VERSION"),
         "description": env!("CARGO_PKG_DESCRIPTION"),
+        "output": {"tty": "text", "piped": "json"},
         "global_args": [
             {
                 "name": "--output",
+                "short": "-o",
                 "type": "string",
                 "enum": ["auto", "json", "text"],
                 "default": "auto",
@@ -28,7 +30,9 @@ pub fn contract() -> Value {
             {
                 "name": "diff",
                 "description": "Diff two structured documents (JSON/YAML/TOML/NDJSON) into a path-addressed change list. The default command, invoked as `dotdiff <a> <b>`. Read-only. Exit 0 = identical, 1 = differences found.",
+                "effects": "read_only",
                 "mutating": false,
+                "cardinality": "single",
                 "stability": "stable",
                 "args": [
                     {"name": "a", "type": "path", "required": true, "description": "First (left) input; a file path, or `-` for stdin."},
@@ -38,20 +42,27 @@ pub fn contract() -> Value {
                 ],
                 "output_fields": [
                     {"name": "identical", "type": "boolean", "description": "True when the inputs have no differences."},
-                    {"name": "changes", "type": "object[]", "description": "Each change has `op` (added/removed/changed), `path` (a dotpath locator), and `old`/`new` values as applicable."}
+                    {"name": "changes", "type": "array", "items": {"type": "object"}, "description": "Each change has `op` (added/removed/changed), `path` (a dotpath locator), and `old`/`new` values as applicable."}
                 ],
+                "outcomes": ["differences_found"],
                 "example": {"args": ["-", "-"], "stdin": "{\"a\":1}"}
             },
             {
                 "name": "schema",
                 "description": "Print this clispec contract as JSON.",
+                "effects": "read_only",
                 "mutating": false,
+                "cardinality": "single",
+                "stdout_schema": {"$ref": "https://clispec.dev/schema/v0.3.json"},
                 "stability": "stable"
             },
             {
                 "name": "completions",
                 "description": "Generate a shell completion script.",
+                "effects": "read_only",
                 "mutating": false,
+                "output_kind": "opaque",
+                "media_type": "text/plain",
                 "stability": "stable",
                 "args": [
                     {"name": "shell", "type": "string", "required": true, "enum": ["bash", "zsh", "fish", "powershell", "elvish"], "description": "Target shell."}
