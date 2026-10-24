@@ -11,6 +11,14 @@ dotpick extracts fields, dotdiff tells you what changed.
 
 ## Install
 
+### Homebrew
+
+```sh
+brew install rvben/tap/dotdiff
+```
+
+### Other installation methods
+
 ```sh
 cargo install dotdiff
 ```
