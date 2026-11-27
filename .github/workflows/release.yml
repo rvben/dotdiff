@@ -256,7 +256,7 @@ jobs:
 
           cat > /tmp/dotdiff.rb << 'FORMULA'
           class Dotdiff < Formula
-            desc "Semantic diff for JSON, YAML, TOML, and NDJSON: a structured, agent-friendly change-list instead of line noise."
+            desc "Semantic diff for JSON, YAML, TOML and NDJSON, as a structured change-list"
             homepage "https://github.com/rvben/dotdiff"
             version "VERSION_NUM"
             license "MIT"
